@@ -6,14 +6,12 @@ firebase.initializeApp({
             authDomain: "pruebajs-c1257.firebaseapp.com",
             databaseURL: "https://pruebajs-c1257.firebaseio.com",
             projectId: "pruebajs-c1257",
-            storageBucket: "pruebajs-c1257.appspot.com",
+            storageBucket: "gs://pruebajs-c1257.appspot.com",
             messagingSenderId: "402047589251",
             appId: "1:402047589251:web:065abff40e5e4d505074b6"
 });
 
 const db = firebase.firestore();
-const storageRef = firebase.storage().ref();
-
 
 function register() {
     let email = document.getElementById('inputEmail').value;
@@ -84,8 +82,28 @@ function login() {
 }
 
 function subirfoto(){
-    consolelog(storageRef);
+    const storageRef = firebase.storage().ref();
+    const archivoFoto = document.querySelector('#foto').files[0];
+    let   nombreArchivo = new Date() + '-' + archivoFoto.name;
+    if(archivoFoto == null){
+        alert("debe seleccionar una imagen");
+    }
+    else{
+        const metada = {
+            contentType: archivoFoto.type
+        } 
+        const task = storageRef.child(nombreArchivo).put(archivoFoto, metada);
 
+        task
+        .then(snapshot => snapshot.ref.getDownloadURL())
+        .then(url => {
+            console.log(url);
+            alert("Imagen Cargada");
+            const imageElement = document.querySelector('#image');
+            imageElement.scr = url;
+        });
+    }
+    console.log(storageRef);
 }
 
 function logout(){
